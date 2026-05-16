@@ -43,6 +43,13 @@ button {
   position: relative;
 }
 
+/* Si un .shell (description) est suivi d'un autre .shell (grille),
+   on supprime le padding-bottom du premier pour éviter le double-gap.
+   Avant : ~132px de vide entre description et "LES SPOTS". */
+.shell:has(+ .shell) {
+  padding-bottom: 0;
+}
+
 /* === HERO CINÉMATIQUE FULL-WIDTH === */
 .hero-cinema {
   position: relative;
@@ -350,7 +357,7 @@ button {
   font-weight: 700;
   letter-spacing: 1.2px;
   color: var(--text-faint);
-  margin: 28px 0 14px;
+  margin: 0 0 14px;
 }
 
 /* === GRILLE MASONRY PINTEREST STYLE === */
