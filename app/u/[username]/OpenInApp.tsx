@@ -16,7 +16,10 @@ interface Props {
  */
 export default function OpenInApp({ username }: Props) {
   useEffect(() => {
-    const deepLink = `tastd://u/${username}`;
+    // encodeURIComponent : si l'username contient `/`, `?`, `#` ou autre char spécial
+    // (en théorie validé serveur via USERNAME_REGEX, mais on défend en profondeur),
+    // on l'échappe pour ne pas injecter une route deep-link différente.
+    const deepLink = `tastd://u/${encodeURIComponent(username)}`;
     const ua = navigator.userAgent || "";
     const isIOS = /iPhone|iPad|iPod/i.test(ua);
 

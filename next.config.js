@@ -11,7 +11,20 @@ const nextConfig = {
     return [
       {
         source: '/.well-known/apple-app-site-association',
-        headers: [{ key: 'Content-Type', value: 'application/json' }],
+        headers: [
+          { key: 'Content-Type', value: 'application/json' },
+          { key: 'Cache-Control', value: 'public, max-age=3600, must-revalidate' },
+        ],
+      },
+      // Pas d'indexation Google : les profils/collections partagés ne doivent pas
+      // apparaître dans les résultats de recherche publique.
+      {
+        source: '/u/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
+      {
+        source: '/c/:path*',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
       },
     ];
   },
