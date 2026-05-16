@@ -5,7 +5,8 @@
       {
         "appID": "4F9YQ5NB4J.com.hugovangay.tastd",
         "paths": [
-          "/c/*"
+          "/c/*",
+          "/u/*"
         ]
       }
     ]
