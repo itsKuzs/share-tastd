@@ -14,24 +14,32 @@ interface Profile {
   bio: string | null;
 }
 
-// Match côté DB : usernames stockés en lowercase, alphanumériques + `.-_`, 3-20 chars.
-// On garde la même contrainte côté serveur pour ne pas hit Supabase sur du junk URL.
-const USERNAME_REGEX = /^[a-z0-9._-]{3,20}$/;
+// Contrainte côté DB : usernames alphanumériques + `.-_`, 3-20 chars.
+// Le regex tolère majuscules/minuscules car 6 users legacy ont des majuscules
+// (Huvng, Chips, Lorna, LemVa, Luca, Lala) — on garde ilike pour rester
+// case-insensitive sans devoir migrer la DB.
+const USERNAME_REGEX = /^[A-Za-z0-9._-]{3,20}$/;
 
 function normalizeUsername(raw: string): string | null {
   const decoded = (() => {
     try { return decodeURIComponent(raw); } catch { return raw; }
   })();
-  const lower = decoded.toLowerCase().trim();
-  return USERNAME_REGEX.test(lower) ? lower : null;
+  const trimmed = decoded.trim();
+  return USERNAME_REGEX.test(trimmed) ? trimmed : null;
+}
+
+/// Échappe les wildcards PostgREST ilike : `%` (multi-char), `_` (single-char), `\` (escape).
+/// Notre regex bloque déjà `%` et `\`, mais `_` est autorisé dans les usernames donc
+/// sans escape, `foo_bar` matcherait aussi `fooXbar`.
+function escapeIlike(s: string): string {
+  return s.replace(/[\\%_]/g, "\\$&");
 }
 
 async function fetchProfileMeta(username: string): Promise<Profile | null> {
   try {
-    // `eq.` au lieu de `ilike.` : pas de wildcards % et _ à échapper,
-    // exact match (les usernames sont lowercase en DB via RLS / contrainte).
+    const pattern = escapeIlike(username);
     const res = await fetch(
-      `${SUPABASE_REST_URL}?username=eq.${encodeURIComponent(username)}&select=username,display_name,avatar_url,bio&limit=1`,
+      `${SUPABASE_REST_URL}?username=ilike.${encodeURIComponent(pattern)}&select=username,display_name,avatar_url,bio&limit=1`,
       {
         headers: {
           apikey: SUPABASE_ANON_KEY,
