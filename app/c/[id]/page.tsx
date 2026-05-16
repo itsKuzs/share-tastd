@@ -5,6 +5,10 @@ import PlacesGrid from "./PlacesGrid";
 const SUPABASE_FUNCTION_URL =
   "https://chuinihsynmqmnyekibh.supabase.co/functions/v1/get-public-collection";
 
+// Anon key publique (rotated 2026-04-21). Nécessaire car la function est en verify_jwt: true.
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNodWluaWhzeW5tcW1ueWVraWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NTg5ODYsImV4cCI6MjA5MjMzNDk4Nn0.lTvEU1tDlA70aQhx7HcjIwLAmGHsmGJ4mPUN39L9auI";
+
 const APP_STORE_URL = "https://apps.apple.com/app/id6762545598";
 
 // ============================================================================
@@ -70,6 +74,10 @@ interface ApiResponse {
 async function fetchCollection(id: string): Promise<ApiResponse | null> {
   try {
     const res = await fetch(`${SUPABASE_FUNCTION_URL}?id=${encodeURIComponent(id)}`, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      },
       next: { revalidate: 60 },
     });
     if (!res.ok) return null;
