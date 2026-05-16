@@ -4,7 +4,7 @@ import OpenInApp from "./OpenInApp";
 
 const SUPABASE_REST_URL = "https://chuinihsynmqmnyekibh.supabase.co/rest/v1/profiles";
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNodWluaWhzeW5tcW1ueWVraWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA4MDAwMjIsImV4cCI6MjA3NjM3NjAyMn0.MOiyXFEEM-A8Sob_w5RFNF_LXEhe-9jD4nawWmtNDe8";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNodWluaWhzeW5tcW1ueWVraWJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NTg5ODYsImV4cCI6MjA5MjMzNDk4Nn0.lTvEU1tDlA70aQhx7HcjIwLAmGHsmGJ4mPUN39L9auI";
 const DEFAULT_OG_IMAGE = "https://share.tastdapp.com/og-default.png";
 
 interface Profile {
