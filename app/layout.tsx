@@ -32,10 +32,8 @@ export default function RootLayout({
         >
           <div style={{ marginBottom: 6 }}>
             <a
-              href="https://tastdapp.com/mentions-legales"
+              href="/mentions-legales"
               style={{ color: "inherit", textDecoration: "underline" }}
-              target="_blank"
-              rel="noopener"
             >
               Mentions légales
             </a>
