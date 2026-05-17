@@ -511,6 +511,70 @@ button {
   font-weight: 500;
 }
 
+/* Multi-takes reviews */
+.reviews-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 14px;
+}
+.reviews-block-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: 0.3px;
+}
+.review-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.review-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: linear-gradient(135deg, #00c6ff66, #af52de66);
+}
+.review-avatar-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.review-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.review-note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.85);
+}
+.review-reco {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.75);
+}
+.review-reco-icon {
+  flex-shrink: 0;
+}
+
 /* === MODAL (sheet expanded) === */
 .modal-backdrop {
   position: fixed;

@@ -28,12 +28,33 @@ interface AddedBy {
   avatar_url?: string | null;
 }
 
+interface ReviewProfile {
+  id?: string;
+  display_name?: string | null;
+  username?: string | null;
+  avatar_url?: string | null;
+  is_verified?: boolean | null;
+  supporter_tier?: string | null;
+}
+
+interface Review {
+  user_id: string;
+  note: string;
+  recommendation: string;
+  tags: string[];
+  photos: string[];
+  created_at: string;
+  updated_at: string;
+  profile?: ReviewProfile | null;
+}
+
 interface Item {
   place_id: string;
   added_at: string;
   place: Place | null;
-  stamp: Stamp | null;
+  stamp?: Stamp | null;
   added_by?: AddedBy | null;
+  reviews?: Review[];
 }
 
 function addedByAvatar(avatar?: string | null): string | null {
@@ -99,11 +120,12 @@ export default function PlacesGrid({ items }: { items: Item[] }) {
 }
 
 function GridCard({ item, onOpen }: { item: Item; onOpen: () => void }) {
-  const { place, stamp, added_by } = item;
+  const { place, stamp, added_by, reviews } = item;
   if (!place) return null;
-  const photos = placePhotos(place, stamp);
+  const photos = placePhotos(place, stamp ?? null);
   const style = categoryStyle(place.category);
-  const hasContent = (stamp?.note?.trim() ?? "").length > 0 || (stamp?.recommendation?.trim() ?? "").length > 0;
+  const reviewCount = (reviews ?? []).filter(r => (r.note?.trim() ?? "").length > 0 || (r.recommendation?.trim() ?? "").length > 0).length;
+  const hasContent = reviewCount > 0 || (stamp?.note?.trim() ?? "").length > 0 || (stamp?.recommendation?.trim() ?? "").length > 0;
   const tagCount = (stamp?.tags ?? []).length;
   const adderSrc = addedByAvatar(added_by?.avatar_url);
   const adderName = added_by?.display_name ?? (added_by?.username ? `@${added_by.username}` : null);
@@ -119,7 +141,11 @@ function GridCard({ item, onOpen }: { item: Item; onOpen: () => void }) {
       )}
       <div className="grid-card-body">
         <div className="grid-card-name">{place.name}</div>
-        {hasContent && (
+        {reviewCount > 0 ? (
+          <div className="grid-card-hint">
+            <span className="grid-card-tag-count">{reviewCount} avis</span>
+          </div>
+        ) : hasContent && (
           <div className="grid-card-hint">
             {stamp?.note && "📝"}
             {stamp?.recommendation && " ✨"}
@@ -146,11 +172,12 @@ function GridCard({ item, onOpen }: { item: Item; onOpen: () => void }) {
 }
 
 function PlaceModal({ item, onClose }: { item: Item; onClose: () => void }) {
-  const { place, stamp } = item;
+  const { place, stamp, reviews } = item;
   if (!place) return null;
-  const photos = placePhotos(place, stamp);
+  const photos = placePhotos(place, stamp ?? null);
   const style = categoryStyle(place.category);
   const tags = stamp?.tags ?? [];
+  const validReviews = (reviews ?? []).filter(r => (r.note?.trim() ?? "").length > 0 || (r.recommendation?.trim() ?? "").length > 0);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -187,22 +214,55 @@ function PlaceModal({ item, onClose }: { item: Item; onClose: () => void }) {
             </div>
           )}
 
-          {stamp?.note && stamp.note.trim().length > 0 && (
-            <div className="block">
-              <div className="block-label">📝 Note</div>
-              <div className="block-text">{stamp.note}</div>
+          {validReviews.length > 0 ? (
+            <div className="reviews-block">
+              <div className="reviews-block-label">{validReviews.length} avis</div>
+              {validReviews.map((r, i) => {
+                const src = addedByAvatar(r.profile?.avatar_url);
+                const name = r.profile?.display_name ?? (r.profile?.username ? `@${r.profile.username}` : "Anonyme");
+                return (
+                  <div key={i} className="review-card">
+                    <div className="review-header">
+                      {src ? (
+                        <img src={src} alt={name} className="review-avatar" />
+                      ) : (
+                        <div className="review-avatar review-avatar-fallback">{name.replace("@", "").slice(0, 1).toUpperCase()}</div>
+                      )}
+                      <div className="review-name">{name}</div>
+                    </div>
+                    {r.note.trim().length > 0 && (
+                      <div className="review-note">{r.note}</div>
+                    )}
+                    {r.recommendation.trim().length > 0 && (
+                      <div className="review-reco">
+                        <span className="review-reco-icon">✨</span>
+                        <span>{r.recommendation}</span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          )}
+          ) : (
+            <>
+              {stamp?.note && stamp.note.trim().length > 0 && (
+                <div className="block">
+                  <div className="block-label">📝 Note</div>
+                  <div className="block-text">{stamp.note}</div>
+                </div>
+              )}
 
-          {stamp?.recommendation && stamp.recommendation.trim().length > 0 && (
-            <div className="block">
-              <div className="block-label">✨ Recommandation</div>
-              <div className="block-text">{stamp.recommendation}</div>
-            </div>
-          )}
+              {stamp?.recommendation && stamp.recommendation.trim().length > 0 && (
+                <div className="block">
+                  <div className="block-label">✨ Recommandation</div>
+                  <div className="block-text">{stamp.recommendation}</div>
+                </div>
+              )}
 
-          {(!stamp?.note || !stamp.note.trim()) && (!stamp?.recommendation || !stamp.recommendation.trim()) && tags.length === 0 && (
-            <div className="empty">Pas encore de note pour ce spot.</div>
+              {(!stamp?.note || !stamp.note.trim()) && (!stamp?.recommendation || !stamp.recommendation.trim()) && tags.length === 0 && (
+                <div className="empty">Pas encore de note pour ce spot.</div>
+              )}
+            </>
           )}
         </div>
       </div>

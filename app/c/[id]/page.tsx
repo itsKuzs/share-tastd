@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import PlacesGrid from "./PlacesGrid";
 
 const SUPABASE_FUNCTION_URL =
-  "https://chuinihsynmqmnyekibh.supabase.co/functions/v1/get-public-collection";
+  "https://chuinihsynmqmnyekibh.supabase.co/functions/v1/get-public-collection-v7";
 
 // Anon key publique (rotated 2026-04-21). Nécessaire car la function est en verify_jwt: true.
 const SUPABASE_ANON_KEY =
@@ -69,12 +69,31 @@ interface AddedBy {
   avatar_url?: string | null;
 }
 
+interface Review {
+  user_id: string;
+  note: string;
+  recommendation: string;
+  tags: string[];
+  photos: string[];
+  created_at: string;
+  updated_at: string;
+  profile?: {
+    id?: string;
+    display_name?: string | null;
+    username?: string | null;
+    avatar_url?: string | null;
+    is_verified?: boolean | null;
+    supporter_tier?: string | null;
+  } | null;
+}
+
 interface Item {
   place_id: string;
   added_at: string;
   place: Place | null;
-  stamp: Stamp | null;
+  stamp?: Stamp | null;  // legacy v6 fallback
   added_by?: AddedBy | null;
+  reviews?: Review[];
 }
 
 interface ApiResponse {
@@ -119,8 +138,21 @@ export async function generateMetadata(
   const { collection } = data;
   const ownerName = collection.owner?.display_name ?? "Quelqu'un";
   const title = `${collection.name} — par ${ownerName}`;
-  const description = collection.description ??
-    `${data.place_count} spot${data.place_count > 1 ? "s" : ""} sélectionnés par ${ownerName} sur tastd.`;
+  const contributorNames: string[] = [];
+  if (collection.owner?.username) contributorNames.push(`@${collection.owner.username}`);
+  for (const c of (data.collaborators ?? [])) {
+    if (c.username) contributorNames.push(`@${c.username}`);
+  }
+  let description: string;
+  if (collection.description) {
+    description = collection.description;
+  } else if (contributorNames.length > 1) {
+    const first = contributorNames.slice(0, 2).join(", ");
+    const rest = contributorNames.length - 2;
+    description = `${data.place_count} spot${data.place_count > 1 ? "s" : ""} • avis de ${first}${rest > 0 ? ` et ${rest} autres` : ""}.`;
+  } else {
+    description = `${data.place_count} spot${data.place_count > 1 ? "s" : ""} sélectionnés par ${ownerName} sur tastd.`;
+  }
   const image = collection.cover || "https://share.tastdapp.com/og-default.png";
 
   return {
