@@ -22,11 +22,25 @@ interface Stamp {
   last_stamped_at: string | null;
 }
 
+interface AddedBy {
+  username?: string | null;
+  display_name?: string | null;
+  avatar_url?: string | null;
+}
+
 interface Item {
   place_id: string;
   added_at: string;
   place: Place | null;
   stamp: Stamp | null;
+  added_by?: AddedBy | null;
+}
+
+function addedByAvatar(avatar?: string | null): string | null {
+  if (!avatar) return null;
+  if (avatar.startsWith("http")) return avatar;
+  if (avatar.length > 100) return `data:image/jpeg;base64,${avatar}`;
+  return null;
 }
 
 function placePhotos(place: Place | null, stamp: Stamp | null): string[] {
@@ -85,12 +99,14 @@ export default function PlacesGrid({ items }: { items: Item[] }) {
 }
 
 function GridCard({ item, onOpen }: { item: Item; onOpen: () => void }) {
-  const { place, stamp } = item;
+  const { place, stamp, added_by } = item;
   if (!place) return null;
   const photos = placePhotos(place, stamp);
   const style = categoryStyle(place.category);
   const hasContent = (stamp?.note?.trim() ?? "").length > 0 || (stamp?.recommendation?.trim() ?? "").length > 0;
   const tagCount = (stamp?.tags ?? []).length;
+  const adderSrc = addedByAvatar(added_by?.avatar_url);
+  const adderName = added_by?.display_name ?? (added_by?.username ? `@${added_by.username}` : null);
 
   return (
     <button className="grid-card" onClick={onOpen}>
@@ -112,6 +128,16 @@ function GridCard({ item, onOpen }: { item: Item; onOpen: () => void }) {
                 {tagCount} tag{tagCount > 1 ? "s" : ""}
               </span>
             )}
+          </div>
+        )}
+        {adderName && (
+          <div className="grid-card-adder">
+            {adderSrc ? (
+              <img src={adderSrc} alt={adderName} className="grid-card-adder-avatar" />
+            ) : (
+              <div className="grid-card-adder-avatar grid-card-adder-fallback">{adderName.replace("@", "").slice(0, 1).toUpperCase()}</div>
+            )}
+            <span className="grid-card-adder-name">par {adderName}</span>
           </div>
         )}
       </div>

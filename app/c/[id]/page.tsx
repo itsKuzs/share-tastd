@@ -54,16 +54,33 @@ interface Stamp {
   last_stamped_at: string | null;
 }
 
+interface Collaborator {
+  id: string;
+  username?: string | null;
+  display_name?: string | null;
+  avatar_url?: string | null;
+  is_verified?: boolean | null;
+  supporter_tier?: string | null;
+}
+
+interface AddedBy {
+  username?: string | null;
+  display_name?: string | null;
+  avatar_url?: string | null;
+}
+
 interface Item {
   place_id: string;
   added_at: string;
   place: Place | null;
   stamp: Stamp | null;
+  added_by?: AddedBy | null;
 }
 
 interface ApiResponse {
   collection: Collection;
   items: Item[];
+  collaborators?: Collaborator[];
   place_count: number;
 }
 
@@ -174,6 +191,7 @@ export default async function CollectionSharePage(
   if (!data) notFound();
 
   const { collection, items, place_count } = data;
+  const collaborators = data.collaborators ?? [];
   const ownerName = collection.owner?.display_name ?? "Quelqu'un";
   const ownerHandle = collection.owner?.username ? `@${collection.owner.username}` : "";
   const avatarSrc = ownerAvatarSrc(collection.owner?.avatar_url);
@@ -215,7 +233,7 @@ export default async function CollectionSharePage(
           </div>
         </div>
 
-        {/* Bottom overlay : tag + titre + count */}
+        {/* Bottom overlay : tag + titre + count + collaborateurs */}
         <div className="hero-bottom">
           <div className="hero-cinema-tag">
             {collection.emoji ?? "📁"} COLLECTION TASTD
@@ -224,6 +242,25 @@ export default async function CollectionSharePage(
           <div className="hero-cinema-count">
             {place_count} spot{place_count > 1 ? "s" : ""}{collection.owner?.city ? ` · ${collection.owner.city}` : ""}
           </div>
+          {collaborators.length > 0 && (
+            <div className="hero-collabs">
+              <div className="hero-collabs-avatars">
+                {collaborators.slice(0, 4).map((c, i) => {
+                  const src = ownerAvatarSrc(c.avatar_url);
+                  return (
+                    <div key={c.id} className="hero-collab-avatar" style={{ zIndex: 10 - i }}>
+                      {src ? <img src={src} alt={c.display_name ?? c.username ?? ""} /> : <div className="hero-collab-avatar-fallback">{(c.display_name ?? c.username ?? "?").slice(0, 1).toUpperCase()}</div>}
+                    </div>
+                  );
+                })}
+              </div>
+              <span className="hero-collabs-label">
+                avec {collaborators.length === 1
+                  ? (collaborators[0].display_name ?? `@${collaborators[0].username}`)
+                  : `${collaborators.length} collaborateurs`}
+              </span>
+            </div>
+          )}
         </div>
       </section>
 
