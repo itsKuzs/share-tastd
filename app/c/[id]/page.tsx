@@ -153,6 +153,11 @@ export async function generateMetadata(
   } else {
     description = `${data.place_count} spot${data.place_count > 1 ? "s" : ""} sélectionnés par ${ownerName} sur tastd.`;
   }
+  // OG description : tronque à 200 chars pour rester safe sur tous les scrapers
+  // (Facebook coupe à 300, Twitter Card à 200, certains tronquent salement).
+  if (description.length > 200) {
+    description = description.slice(0, 197) + "...";
+  }
   const image = collection.cover || "https://share.tastdapp.com/og-default.png";
 
   return {
