@@ -246,19 +246,11 @@ button {
   .hero-bottom { padding: 22px 22px 28px; }
 }
 
-/* Sticky CTA bar */
-.cta-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: linear-gradient(to top, var(--bg) 60%, rgba(13,13,13,0));
-  padding: 20px 16px 32px;
-  z-index: 10;
-}
-.cta-bar-inner {
+/* CTA inline (sous le footer "Créé sur tastd…") */
+.cta-inline {
   max-width: 640px;
-  margin: 0 auto;
+  margin: 16px auto 48px;
+  padding: 0 16px;
 }
 .cta-button {
   display: flex;

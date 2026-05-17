@@ -321,10 +321,8 @@ export default async function CollectionSharePage(
         <div className="footer">
           Créé sur tastd — l'app pour curer tes spots préférés.
         </div>
-      </div>
 
-      <div className="cta-bar">
-        <div className="cta-bar-inner">
+        <div className="cta-inline">
           <a href={APP_STORE_URL} className="cta-button" target="_blank" rel="noopener">
             Ouvrir dans tastd · télécharger l'app
           </a>
