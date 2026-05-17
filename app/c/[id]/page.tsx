@@ -273,7 +273,7 @@ export default async function CollectionSharePage(
         {/* Bottom overlay : tag + titre + count + collaborateurs */}
         <div className="hero-bottom">
           <div className="hero-cinema-tag">
-            {collection.emoji ?? "📁"} COLLECTION TASTD
+            COLLECTION TASTD
           </div>
           <h1 className="hero-cinema-title">{collection.name}</h1>
           <div className="hero-cinema-count">
