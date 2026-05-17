@@ -18,6 +18,19 @@ export default function RootLayout({
         <meta name="apple-itunes-app" content="app-id=6762545598" />
       </head>
       <body>
+        {/* Sticky app banner — reproduit le look du Smart App Banner iOS mais sticky on scroll.
+            Visible mobile only (le smart banner natif iOS reste actif en backup). */}
+        <a
+          href="https://apps.apple.com/app/id6762545598"
+          className="sticky-app-bar"
+        >
+          <img src="/logo.svg" alt="tastd" className="sticky-app-bar-logo" />
+          <div className="sticky-app-bar-text">
+            <strong>tastd</strong>
+            <span>Ouvrir dans l'app tastd</span>
+          </div>
+          <span className="sticky-app-bar-cta">OUVRIR</span>
+        </a>
         {children}
         <footer
           style={{

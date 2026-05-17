@@ -246,6 +246,60 @@ button {
   .hero-bottom { padding: 22px 22px 28px; }
 }
 
+/* Sticky app banner — mobile only, reproduit le Smart App Banner iOS */
+.sticky-app-bar {
+  display: none;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  text-decoration: none;
+  color: var(--text);
+}
+@media (max-width: 700px) {
+  .sticky-app-bar { display: flex; }
+}
+.sticky-app-bar-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  flex-shrink: 0;
+  background: #fff;
+  padding: 4px;
+}
+.sticky-app-bar-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.sticky-app-bar-text strong {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+}
+.sticky-app-bar-text span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.sticky-app-bar-cta {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #66c8ff 0%, #2f7bff 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
 /* CTA inline (sous le footer "Créé sur tastd…") */
 .cta-inline {
   max-width: 640px;
